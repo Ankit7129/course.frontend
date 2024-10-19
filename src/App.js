@@ -19,6 +19,7 @@ import AddCourse from './components/Dashboard/College/AddCourse'; // Import AddC
 import CourseList from './components/Dashboard/Student/CourseList';
 import PurchasePage from './components/Dashboard/Student/PurchasePage';
 import NewPassword from './components/Auth/NewPassword'; // Adjust the path accordingly
+import NotFound from './components/NotFound'; // Create a NotFound component
 
 
 const App = () => {
@@ -42,6 +43,7 @@ const App = () => {
         <Route path="/courses" element={<CourseList />} />
         <Route path="/purchase" element={<PurchasePage />} />
         <Route path="/reset-password/:token" component={NewPassword} />
+        <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
 
 
         <Route path="/manage-courses" element={<ManageCourses />} />
