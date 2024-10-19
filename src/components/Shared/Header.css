@@ -1,0 +1,89 @@
+/* Header Styles */
+.header {
+    background-color: #2575fc; /* Background color of the header */
+    color: white; /* Text color */
+    padding: 20px 0; /* Padding for the header */
+    position: relative; /* Positioning for bubbles */
+    overflow: hidden; /* Hide overflow for the floating bubbles */
+  }
+  
+  .header-container {
+    text-align: center; /* Center align text */
+  }
+  
+  .site-title {
+    font-size: 2.5em; /* Font size for the site title */
+    margin-bottom: 10px; /* Space below the title */
+  }
+  
+  .tagline {
+    font-size: 1.2em; /* Font size for the tagline */
+    font-style: italic; /* Italicize the tagline */
+    margin-bottom: 20px; /* Space below the tagline */
+  }
+  
+  /* Navigation Styles */
+  .nav {
+    margin: 20px 0; /* Margin for the navigation links */
+  }
+  
+  .nav-link {
+    color: white; /* Link color */
+    text-decoration: none; /* Remove underline */
+    margin: 0 15px; /* Space between links */
+    padding: 10px 15px; /* Padding for links */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.2); /* Hover effect */
+  }
+  
+  /* Floating bubble animation */
+  .bubble {
+    position: absolute;
+    bottom: -50px; /* Start below the view */
+    width: 40px; /* Default bubble width */
+    height: 40px; /* Default bubble height */
+    background-color: rgba(255, 255, 255, 0.1); /* Bubble color */
+    border-radius: 50%; /* Make it circular */
+    animation: rise 10s infinite ease-in; /* Animation for floating */
+  }
+  
+  .bubble:nth-child(2) {
+    width: 60px; /* Size for second bubble */
+    height: 60px;
+    left: 25%; /* Position for second bubble */
+    animation-duration: 12s; /* Animation duration */
+  }
+  
+  .bubble:nth-child(3) {
+    width: 80px; /* Size for third bubble */
+    height: 80px;
+    left: 50%; /* Position for third bubble */
+    animation-duration: 8s; /* Animation duration */
+  }
+  
+  .bubble:nth-child(4) {
+    width: 50px; /* Size for fourth bubble */
+    height: 50px;
+    left: 75%; /* Position for fourth bubble */
+    animation-duration: 10s; /* Animation duration */
+  }
+  
+  /* Keyframes for bubble rising animation */
+  @keyframes rise {
+    0% {
+      bottom: -50px; /* Start position */
+      transform: translateX(0); /* No horizontal movement */
+    }
+    50% {
+      transform: translateX(30px); /* Move to the right */
+    }
+    100% {
+      bottom: 100vh; /* End position */
+      transform: translateX(-30px); /* Move to the left */
+    }
+  }
+  
