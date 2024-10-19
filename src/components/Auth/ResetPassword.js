@@ -1,53 +1,70 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
+// Use the backend base URL from environment variables or default to localhost
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000';
 
 const ResetPassword = () => {
-    const { token } = useParams(); // Get token from URL
-    const [newPassword, setNewPassword] = useState('');
-    const [message, setMessage] = useState('');
-    const navigate = useNavigate();
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const { token } = useParams(); // Token from the URL parameters
+  const navigate = useNavigate();
 
-    const handleResetPassword = async (e) => {
-        e.preventDefault();
+  const handlePasswordReset = async (e) => {
+    e.preventDefault();
 
-        try {
-            const response = await fetch(`${BASE_URL}/api/auth/reset-password/${token}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ newPassword }),
-            });
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
 
-            if (response.ok) {
-                const data = await response.json();
-                setMessage(data.message || 'Password reset successfully!');
-                setTimeout(() => navigate('/'), 3000); // Redirect after 3 seconds
-            } else {
-                const errorData = await response.json();
-                setMessage(errorData.message || 'Failed to reset password. Please try again.');
-            }
-        } catch (error) {
-            setMessage('An error occurred. Please try again later.');
-        }
-    };
+    try {
+      const response = await axios.post(`${BASE_URL}/api/auth/reset-password/${token}`, {
+        newPassword,
+      });
 
-    return (
+      if (response.status === 200) {
+        setSuccess('Password reset successfully. Redirecting to login...');
+        setTimeout(() => {
+          navigate('/');
+        }, 3000); // Redirect to login after 3 seconds
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || 'Something went wrong. Please try again.');
+    }
+  };
+
+  return (
+    <div className="reset-password-container">
+      <h2>Reset Your Password</h2>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>{success}</p>}
+      <form onSubmit={handlePasswordReset}>
         <div>
-            <h2>Reset Password</h2>
-            <form onSubmit={handleResetPassword}>
-                <input
-                    type="password"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Reset Password</button>
-            </form>
-            {message && <p>{message}</p>} {/* Display message to the user */}
+          <label>New Password:</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+          />
         </div>
-    );
+        <div>
+          <label>Confirm New Password:</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit">Reset Password</button>
+      </form>
+    </div>
+  );
 };
 
 export default ResetPassword;
