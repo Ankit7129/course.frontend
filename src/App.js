@@ -6,7 +6,7 @@ import Header from './components/Shared/Header';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import ForgetPassword from './components/Auth/ForgetPassword';
-import ResetPassword from './components/Auth/ResetPassword';
+//import ResetPassword from './components/Auth/ResetPassword';
 import StudentDashboard from './components/Dashboard/Student/StudentDashboard';
 import CollegeDashboard from './components/Dashboard/College/CollegeDashboard';
 import HomePage from './components/HomePage'; // Import the HomePage component
@@ -18,7 +18,7 @@ import DocumentUpload from './components/Dashboard/Student/DocumentUpload';
 import AddCourse from './components/Dashboard/College/AddCourse'; // Import AddCourse
 import CourseList from './components/Dashboard/Student/CourseList';
 import PurchasePage from './components/Dashboard/Student/PurchasePage';
-import NewPassword from './components/Auth/NewPassword'; // Adjust the path accordingly
+//import NewPassword from './components/Auth/NewPassword'; // Adjust the path accordingly
 import NotFound from './components/NotFound'; // Create a NotFound component
 
 
@@ -34,15 +34,16 @@ const App = () => {
         <Route path="/register/student" element={<Register userType="student" />} />
         <Route path="/register/college" element={<Register userType="college" />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/verify-email/:token" element={<VerifyEmail />} /> {/* Add this route */}
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/dashboard/college" element={<CollegeDashboard />} />
-        {/* Additional Routes for components */}
+        {/* Additional Routes for components
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+ */}
         <Route path="/add-course" element={<AddCourse />} /> {/* Add course route */}
         <Route path="/courses" element={<CourseList />} />
         <Route path="/purchase" element={<PurchasePage />} />
-        <Route path="/reset-password/:token" component={NewPassword} />
+        
         <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
 
 
