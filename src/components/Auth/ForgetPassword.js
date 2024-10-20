@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './ForgetPassword.css';
-//const BASE_URL = 'https://jambavantha-course-backend.onrender.com' ;//|| 
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://jambavantha-course-backend.onrender.com' ;//|| 
+//const BASE_URL = 'http://localhost:5000';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState('');
