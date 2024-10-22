@@ -50,6 +50,8 @@ const StudentDashboard = () => {
       <div className="button-group">
         <button onClick={() => navigate('/courses')}>View Courses</button>
         <button onClick={() => navigate('/update-profile')}>Update Profile</button>
+        <button onClick={() => navigate('/documents')}>Document Upload</button> {/* New Document Upload Button */}
+        <button onClick={() => navigate('/my-documents')}>My Documents</button> {/* New My Documents Button */}
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>

@@ -12,13 +12,14 @@ import CollegeDashboard from './components/Dashboard/College/CollegeDashboard';
 import HomePage from './components/HomePage'; // Import the HomePage component
 import VerifyEmail from './components/Auth/VerifyEmail'; // Import the new component
 import ManageCourses from './components/Dashboard/College/ManageCourses';
-import CourseApprovals from './components/Dashboard/College/CourseApprovals';
-import DocumentVerification from './components/Dashboard/College/DocumentVerification';
-import DocumentUpload from './components/Dashboard/Student/DocumentUpload';
 import AddCourse from './components/Dashboard/College/AddCourse'; // Import AddCourse
 import CourseList from './components/Dashboard/Student/CourseList';
 import PurchasePage from './components/Dashboard/Student/PurchasePage';
-//import NewPassword from './components/Auth/NewPassword'; // Adjust the path accordingly
+import Documents from './components/Dashboard/Student/Documents';
+import DocumentList from './components/Dashboard/Student/DocumentList';
+import UpdateProfile from './components/Dashboard/Student/UpdateProfile';
+
+
 import NotFound from './components/NotFound'; // Create a NotFound component
 
 
@@ -37,21 +38,18 @@ const App = () => {
         <Route path="/verify-email/:token" element={<VerifyEmail />} /> {/* Add this route */}
         <Route path="/dashboard/student" element={<StudentDashboard />} />
         <Route path="/dashboard/college" element={<CollegeDashboard />} />
-        {/* Additional Routes for components
-                <Route path="/reset-password/:token" element={<ResetPassword />} />
- */}
+
         <Route path="/add-course" element={<AddCourse />} /> {/* Add course route */}
         <Route path="/courses" element={<CourseList />} />
         <Route path="/purchase" element={<PurchasePage />} />
-        
+        <Route path="/documents" element={<Documents />} />
         <Route path="*" element={<NotFound />} /> {/* Catch-all route */}
+        <Route path="/my-documents" element={< DocumentList/>} />
+        <Route path="/update-profile" element={<UpdateProfile />} />
 
 
         <Route path="/manage-courses" element={<ManageCourses />} />
-        <Route path="/dashboard/college/course-approvals" element={<CourseApprovals />} />
-        <Route path="/dashboard/college/document-verification" element={<DocumentVerification />} />
-        <Route path="/dashboard/student/document-upload" element={<DocumentUpload />} />
-
+        
      
       </Routes>
     </Router>
