@@ -9,6 +9,7 @@ const UpdateProfile = () => {
   // State variables for non-editable fields
   const [studentEmail, setStudentEmail] = useState('');
   const [studentId, setStudentId] = useState('');
+  const [aadharNumber, setAadharNumber] = useState(''); // Aadhaar number state
   
   // State variables for status messages
   const [successMessage, setSuccessMessage] = useState('');
@@ -21,6 +22,7 @@ const UpdateProfile = () => {
     const storedPhone = localStorage.getItem('studentPhoneNumber');
     const storedBackground = localStorage.getItem('educationalBackground');
     const storedId = localStorage.getItem('studentId');
+    const storedAadhar = localStorage.getItem('aadharNumber'); // Fetch Aadhaar number
 
     // Populate form with existing data
     if (storedName) setStudentName(storedName);
@@ -28,6 +30,7 @@ const UpdateProfile = () => {
     if (storedPhone) setStudentPhone(storedPhone);
     if (storedBackground) setEducationalBackground(storedBackground);
     if (storedId) setStudentId(storedId);
+    if (storedAadhar) setAadharNumber(storedAadhar); // Set Aadhaar number
   }, []);
 
   const handleSubmit = (e) => {
@@ -112,11 +115,32 @@ const UpdateProfile = () => {
             required
           >
             <option value="">Select Educational Background</option>
-            <option value="8th Grade">8th Grade</option>
-            <option value="9th Grade">9th Grade</option>
-            <option value="10th Grade">10th Grade</option>
-            <option value="Graduation">Graduation</option>
+            <option value="Class 8">Class 8</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11 Science">Class 11 Science</option>
+            <option value="Class 11 Commerce">Class 11 Commerce</option>
+            <option value="Class 11 Arts">Class 11 Arts</option>
+            <option value="Class 12 Science">Class 12 Science</option>
+            <option value="Class 12 Commerce">Class 12 Commerce</option>
+            <option value="Class 12 Arts">Class 12 Arts</option>
+            <option value="Undergraduate (B.Tech)">Undergraduate (B.Tech)</option>
+            <option value="Undergraduate (BBA)">Undergraduate (BBA)</option>
+            <option value="Other (Please specify)">Other (Please specify)</option>
           </select>
+        </div>
+
+        {/* Aadhaar Number - Non-editable */}
+        <div className="form-group">
+          <label>Aadhaar Number:</label>
+          <input
+            type="text"
+            value={aadharNumber}
+            onChange={(e) => setAadharNumber(e.target.value)}
+            //readOnly
+            required
+            
+          />
         </div>
 
         <button type="submit">Update Profile</button>

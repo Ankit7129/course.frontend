@@ -1,68 +1,80 @@
-// DocumentList.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000'; // Use your base URL
 
 const DocumentList = () => {
+  const [aadharNumber, setAadharNumber] = useState('');
   const [documents, setDocuments] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Get the studentId and studentName from localStorage
-  const studentId = localStorage.getItem('studentId');
-  const token = localStorage.getItem('token'); // Assuming the token is stored after login
-
   useEffect(() => {
-    const fetchDocuments = async () => {
-      if (!studentId) {
-        setErrorMessage('Student ID not found in local storage.');
-        return;
+    // Get the Aadhaar number from local storage after login and set it in the state
+    const storedAadharNumber = localStorage.getItem('aadharNumber');
+    if (storedAadharNumber) {
+      setAadharNumber(storedAadharNumber);
+    }
+  }, []); // Run once on component mount
+
+  const handleFetchDocuments = async (event) => {
+    event.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      const token = localStorage.getItem('token'); // Get the token from local storage
+      const response = await axios.get(`${BASE_URL}/api/documents`, {
+        params: { aadharNumber }, // Pass the Aadhaar number as a query parameter
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      // Check if documents are returned
+      if (response.data.length === 0) {
+        setError('No documents found for the provided Aadhaar number.');
+      } else {
+        setDocuments(response.data); // Set the retrieved documents
       }
-
-      setLoading(true);
-      setErrorMessage('');
-
-      try {
-        const response = await axios.get(`${BASE_URL}/api/documents?studentId=${studentId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setDocuments(response.data); // Set the fetched documents
-      } catch (error) {
-        setErrorMessage(error.response?.data?.error || 'Error fetching documents');
-        console.error('Error fetching documents:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDocuments();
-  }, [studentId, token]); // Dependency array includes studentId and token
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error fetching documents. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
-      <h2>Your Uploaded Documents</h2>
+      <h2>Document List</h2>
+      <form onSubmit={handleFetchDocuments}>
+        <input
+          type="text"
+          placeholder="Aadhaar Number"
+          value={aadharNumber}
+          readOnly // Make the input read-only
+          required
+        />
+        <button type="submit">Fetch Documents</button>
+      </form>
+
       {loading && <p>Loading...</p>}
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
       {documents.length > 0 && (
         <div>
+          <h3>Documents Found:</h3>
           <ul>
-            {documents.map((document) => (
-              <li key={document._id}>
-                <p>Document Type: {document.documentType}</p>
-                <p>Aadhaar Number: {document.aadhaarNo}</p>
-                <p>DigiLocker ID: {document.digilockerId}</p>
-                <p>
-                  Document URL: <a href={document.documentUrl} target="_blank" rel="noopener noreferrer">View Document</a>
-                </p>
-                <hr />
+            {documents.map((doc) => (
+              <li key={doc._id}>
+                <strong>Document Type:</strong> {doc.documentType}<br />
+                <strong>Document URL:</strong> <a href={doc.documentUrl} target="_blank" rel="noopener noreferrer">View Document</a><br />
+                <strong>Aadhaar Number:</strong> {doc.aadharNumber}<br />
+                <strong>Status:</strong> {doc.verified ? 'Verified' : 'Not Verified'}<br />
               </li>
             ))}
           </ul>
         </div>
       )}
-      {documents.length === 0 && !loading && <p>No documents found.</p>} {/* Message for no documents */}
     </div>
   );
 };

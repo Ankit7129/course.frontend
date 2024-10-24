@@ -33,6 +33,7 @@ const StudentDashboard = () => {
   const studentEmail = localStorage.getItem('studentEmail');
   const studentPhone = localStorage.getItem('studentPhoneNumber');
   const educationalBackground = localStorage.getItem('educationalBackground');
+  const aadharNumber = localStorage.getItem('aadharNumber'); // Retrieve Aadhar number
 
   return (
     <div className="dashboard-container">
@@ -45,13 +46,15 @@ const StudentDashboard = () => {
         <p>Email: {studentEmail}</p>
         <p>Phone Number: {studentPhone}</p>
         <p>Educational Background: {educationalBackground}</p>
+        <p>Aadhar Number: {aadharNumber}</p> {/* Display Aadhar Number */}
       </div>
 
       <div className="button-group">
         <button onClick={() => navigate('/courses')}>View Courses</button>
         <button onClick={() => navigate('/update-profile')}>Update Profile</button>
-        <button onClick={() => navigate('/documents')}>Document Upload</button> {/* New Document Upload Button */}
-        <button onClick={() => navigate('/my-documents')}>My Documents</button> {/* New My Documents Button */}
+        <button onClick={() => navigate('/documents')}>Document Upload</button> {/* Existing Document Upload Button */}
+        <button onClick={() => navigate('/my-documents')}>My Documents</button> {/* Existing My Documents Button */}
+        <button onClick={() => navigate('/document-part-two')}>Document Part Two</button> {/* New Button for Document Part Two */}
         <button className="logout-button" onClick={handleLogout}>
           Logout
         </button>

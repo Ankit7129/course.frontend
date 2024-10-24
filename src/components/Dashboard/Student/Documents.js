@@ -1,114 +1,135 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import './DocumentUpload.css'; // Import CSS for styling
 const BASE_URL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000'; // Use your base URL
 
 const DocumentUpload = () => {
-  const navigate = useNavigate();
-  const [documentType, setDocumentType] = useState('');
-  const [aadhaarNo, setAadhaarNo] = useState('');
-  const [digilockerId, setDigilockerId] = useState('');
+  // State to hold the Aadhar number, document, document type, etc.
+  const [aadharNumber, setAadharNumber] = useState('');
   const [document, setDocument] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
+  const [documentType, setDocumentType] = useState('');
+  const [customDocumentType, setCustomDocumentType] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Retrieve student information from localStorage
-  const studentId = localStorage.getItem('studentId');
-  const studentName = localStorage.getItem('studentName');
+  // Use useEffect to fetch Aadhar number from local storage on component mount
+  useEffect(() => {
+    const storedAadhar = localStorage.getItem('aadharNumber'); // Fetch Aadhar number
+    if (storedAadhar) {
+      setAadharNumber(storedAadhar); // Set the fetched value as the Aadhar number
+    }
+  }, []);
 
-  const handleUpload = async (e) => {
-    e.preventDefault();
+  const handleDocumentChange = (event) => {
+    setDocument(event.target.files[0]);
+  };
 
+  const handleUpload = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    // Validate Aadhar number format
+    if (!/^\d{16}$/.test(aadharNumber)) {
+      setError('Aadhar number must be a 16-digit number.');
+      setLoading(false);
+      return;
+    }
+
+    // Create FormData object to send the file and Aadhar number
     const formData = new FormData();
     formData.append('document', document);
-    formData.append('documentType', documentType);
-    formData.append('aadhaarNo', aadhaarNo);
-    formData.append('digilockerId', digilockerId);
-    formData.append('studentId', studentId); // Include student ID
-    formData.append('studentName', studentName); // Include student name
-
-    const token = localStorage.getItem('token'); // Assuming you store the token after login
+    formData.append('aadharNumber', aadharNumber);
+    formData.append('documentType', documentType === 'Other (Please specify)' ? customDocumentType : documentType); // Use custom type if selected
 
     try {
-      await axios.post(`${BASE_URL}/api/documents/upload`, formData, {
+      const token = localStorage.getItem('token'); // Get the token from local storage
+      const response = await axios.post(`${BASE_URL}/api/documents/upload`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data', // Important for file uploads
         },
       });
-      // Set success message and clear any previous error
-      setSuccessMessage('Document uploaded successfully!');
-      setErrorMessage(''); // Clear error message
-    } catch (error) {
-      // Set error message and clear any previous success
-      setErrorMessage(error.response?.data?.error || 'Error uploading document');
-      setSuccessMessage(''); // Clear success message
-      console.error('Error uploading document:', error);
+
+      setSuccess('Document uploaded successfully!');
+      setDocument(null);
+      setDocumentType('');
+      setCustomDocumentType(''); // Clear custom input
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error uploading document. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="document-upload-container">
+    <div>
       <h2>Upload Document</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} {/* Display success message */}
       <form onSubmit={handleUpload}>
-        <div className="form-group">
-          <label>
-            Student ID:
-            <input type="text" value={studentId} readOnly />
-          </label>
+        <div>
+          <label htmlFor="aadharNumber">Aadhar Number:</label>
+          <input
+            type="text"
+            id="aadharNumber"
+            value={aadharNumber}
+            readOnly // Make this field read-only
+          />
         </div>
-        <div className="form-group">
-          <label>
-            Student Name:
-            <input type="text" value={studentName} readOnly />
-          </label>
+        <div>
+          <label htmlFor="document">Choose Document:</label>
+          <input
+            type="file"
+            id="document"
+            accept=".pdf,image/*" // Accept PDF and images
+            onChange={handleDocumentChange}
+            required
+          />
         </div>
-        <div className="form-group">
-          <label>
-            Document (Type: File):
-            <input type="file" onChange={(e) => setDocument(e.target.files[0])} required />
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            Document Type:
-            <select value={documentType} onChange={(e) => setDocumentType(e.target.value)} required>
-              <option value="">Select Document Type</option>
-              <option value="class_10_certificate">Class 10 Certificate</option>
-              <option value="class_11_certificate">Class 11 Certificate</option>
-              <option value="class_12_certificate">Class 12 Certificate</option>
-              <option value="btech_graduation">B.Tech Graduation</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
-        </div>
-        <div className="form-group">
-          <label>
-            Aadhaar Number:
+        <div>
+          <label htmlFor="documentType">Document Type:</label>
+          <select
+            id="documentType"
+            value={documentType}
+            onChange={(e) => {
+              setDocumentType(e.target.value);
+              if (e.target.value !== 'Other (Please specify)') {
+                setCustomDocumentType(''); // Clear custom input if not selecting "Other"
+              }
+            }}
+            required
+          >
+            <option value="">Select Educational Background</option>
+            <option value="Class 8">Class 8</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11 Science">Class 11 Science</option>
+            <option value="Class 11 Commerce">Class 11 Commerce</option>
+            <option value="Class 11 Arts">Class 11 Arts</option>
+            <option value="Class 12 Science">Class 12 Science</option>
+            <option value="Class 12 Commerce">Class 12 Commerce</option>
+            <option value="Class 12 Arts">Class 12 Arts</option>
+            <option value="Undergraduate (B.Tech)">Undergraduate (B.Tech)</option>
+            <option value="Undergraduate (BBA)">Undergraduate (BBA)</option>
+            <option value="Other (Please specify)">Other (Please specify)</option>
+          </select>
+          {documentType === 'Other (Please specify)' && (
             <input
               type="text"
-              value={aadhaarNo}
-              onChange={(e) => setAadhaarNo(e.target.value)}
-              required // Set required for Aadhaar number field
+              placeholder="Specify other document type"
+              value={customDocumentType}
+              onChange={(e) => setCustomDocumentType(e.target.value)}
+              required // Make this required if "Other" is selected
             />
-          </label>
+          )}
         </div>
-        <div className="form-group">
-          <label>
-            DigiLocker ID:
-            <input
-              type="text"
-              value={digilockerId}
-              onChange={(e) => setDigilockerId(e.target.value)}
-              required // Set required for DigiLocker ID field
-            />
-          </label>
-        </div>
-        <button type="submit">Upload</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Uploading...' : 'Upload Document'}
+        </button>
       </form>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>
   );
 };

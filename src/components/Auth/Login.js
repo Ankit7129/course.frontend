@@ -37,6 +37,7 @@ const Login = ({ userType }) => {
           localStorage.setItem('adminEmail', response.data.college.adminEmail);
           localStorage.setItem('phoneNumber', response.data.college.phoneNumber);
           localStorage.setItem('registrationNumber', response.data.college.registrationNumber);
+          
         } else if (userType === 'student' && response.data.student) {
           // Store the student-related data
           localStorage.setItem('studentId', response.data.studentID);
@@ -44,6 +45,8 @@ const Login = ({ userType }) => {
           localStorage.setItem('studentEmail', response.data.student.email);
           localStorage.setItem('studentPhoneNumber', response.data.student.phoneNumber);
           localStorage.setItem('educationalBackground', response.data.student.educationalBackground);
+          localStorage.setItem('aadharNumber', response.data.student.aadharNumber); // Save Aadhar number
+
         }
 
         // Redirect to the appropriate dashboard
